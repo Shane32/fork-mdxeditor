@@ -152,6 +152,16 @@ describe('markdown import export', () => {
     testIdenticalMarkdown(md)
   })
 
+  it('supports paragraphs within list items', () => {
+    const md = `
+1. First item
+
+   First item's second paragraph
+2. Second item
+`
+    testIdenticalMarkdown(md)
+  })
+
   it('supports markdown blockquotes', () => {
     const md = `
 Hello!

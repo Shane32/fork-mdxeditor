@@ -14,8 +14,11 @@ import {
 } from '../core'
 import { MdastListVisitor } from './MdastListVisitor'
 import { MdastListItemVisitor } from './MdastListItemVisitor'
+import { MdastListItemSpreadParagraphVisitor } from './MdastListItemSpreadParagraphVisitor'
 import { LexicalListVisitor } from './LexicalListVisitor'
 import { LexicalListItemVisitor } from './LexicalListItemVisitor'
+import { LexicalListItemSpreadParagraphVisitor } from './LexicalListItemSpreadParagraphVisitor'
+import { ListItemSpreadParagraphNode } from './ListItemSpreadParagraphNode'
 import {
   INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
@@ -104,9 +107,9 @@ export const listsPlugin = realmPlugin({
       [addActivePlugin$]: 'lists',
       [addMdastExtension$]: gfmTaskListItemFromMarkdown(),
       [addSyntaxExtension$]: gfmTaskListItem(),
-      [addImportVisitor$]: [MdastListVisitor, MdastListItemVisitor],
-      [addLexicalNode$]: [ListItemNode, ListNode],
-      [addExportVisitor$]: [LexicalListVisitor, LexicalListItemVisitor],
+      [addImportVisitor$]: [MdastListVisitor, MdastListItemVisitor, MdastListItemSpreadParagraphVisitor],
+      [addLexicalNode$]: [ListItemNode, ListNode, ListItemSpreadParagraphNode],
+      [addExportVisitor$]: [LexicalListVisitor, LexicalListItemVisitor, LexicalListItemSpreadParagraphVisitor],
       [addToMarkdownExtension$]: gfmTaskListItemToMarkdown(),
       [addComposerChild$]: [TabIndentationPlugin, ListPlugin, CheckListPlugin],
       [addNestedEditorChild$]: [TabIndentationPlugin, ListPlugin, CheckListPlugin]

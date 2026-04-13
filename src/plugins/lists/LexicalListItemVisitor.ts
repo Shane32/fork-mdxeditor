@@ -30,17 +30,27 @@ export const LexicalListItemVisitor: LexicalExportVisitor<ListItemNode, Mdast.Li
         children: []
       }) as Mdast.ListItem
       let surroundingParagraph: Mdast.Paragraph | null = null
+      let paragraphCount = 0
       for (const child of lexicalNode.getChildren()) {
         if ($isTextNode(child) || $isLineBreakNode(child) || (child.isInline() && ($isElementNode(child) || $isDecoratorNode(child)))) {
-          surroundingParagraph ??= actions.appendToParent(listItem, {
-            type: 'paragraph' as const,
-            children: []
-          }) as Mdast.Paragraph
+          if (!surroundingParagraph) {
+            paragraphCount++
+            surroundingParagraph = actions.appendToParent(listItem, {
+              type: 'paragraph' as const,
+              children: []
+            }) as Mdast.Paragraph
+          }
           actions.visit(child, surroundingParagraph)
         } else {
           surroundingParagraph = null
+          if (!$isListNode(child)) {
+            paragraphCount++
+          }
           actions.visit(child, listItem)
         }
+      }
+      if (paragraphCount > 1) {
+        listItem.spread = true
       }
     }
   }

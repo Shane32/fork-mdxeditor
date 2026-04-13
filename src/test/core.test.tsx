@@ -1,6 +1,6 @@
 import React from 'react'
 import { describe, expect, it } from 'vitest'
-import { MDXEditor, MDXEditorMethods } from '../'
+import { MDXEditor, MDXEditorMethods, listsPlugin } from '../'
 import { render } from '@testing-library/react'
 import { $getRoot, createEditor, ParagraphNode, TextNode } from 'lexical'
 import { QuoteNode } from '@lexical/rich-text'
@@ -126,5 +126,12 @@ describe('markdown import export', () => {
   })
   it('works with code in strong', () => {
     testIdenticalMarkdown('**`Hello` World**')
+  })
+
+  it('supports paragraphs within list items', () => {
+    const ref = React.createRef<MDXEditorMethods>()
+    const md = `1. First item\n\n   First item's second paragraph\n2. Second item`
+    render(<MDXEditor ref={ref} markdown={md} plugins={[listsPlugin()]} />)
+    expect(ref.current?.getMarkdown().trim()).toEqual(md.trim())
   })
 })
