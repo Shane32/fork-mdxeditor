@@ -12,6 +12,6 @@ export const LexicalListVisitor: LexicalExportVisitor<ListNode, Mdast.List> = {
       children: []
     }) as Mdast.List
     actions.visitChildren(lexicalNode, list)
-    list.spread = list.children.some((child) => (child as Mdast.ListItem).spread === true)
+    list.spread = list.children.some((child) => child.type === 'listItem' && (child as Mdast.ListItem).spread === true)
   }
 }
