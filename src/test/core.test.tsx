@@ -1,6 +1,8 @@
 import React from 'react'
 import { describe, expect, it } from 'vitest'
 import { MDXEditor, MDXEditorMethods } from '../'
+import { listsPlugin } from '../plugins/lists'
+import { quotePlugin } from '../plugins/quote'
 import { render } from '@testing-library/react'
 import { $getRoot, createEditor, ParagraphNode, TextNode } from 'lexical'
 import { QuoteNode } from '@lexical/rich-text'
@@ -23,6 +25,13 @@ import { LexicalQuoteVisitor } from '../plugins/quote/LexicalQuoteVisitor'
 function testIdenticalMarkdown(markdown: string) {
   const ref = React.createRef<MDXEditorMethods>()
   render(<MDXEditor ref={ref} markdown={markdown} />)
+  const processedMarkdown = ref.current?.getMarkdown().trim()
+  expect(processedMarkdown).toEqual(markdown.trim())
+}
+
+function testIdenticalMarkdownWithPlugins(markdown: string, plugins: React.ComponentProps<typeof MDXEditor>['plugins']) {
+  const ref = React.createRef<MDXEditorMethods>()
+  render(<MDXEditor ref={ref} markdown={markdown} plugins={plugins} />)
   const processedMarkdown = ref.current?.getMarkdown().trim()
   expect(processedMarkdown).toEqual(markdown.trim())
 }
@@ -126,5 +135,42 @@ describe('markdown import export', () => {
   })
   it('works with code in strong', () => {
     testIdenticalMarkdown('**`Hello` World**')
+  })
+})
+
+describe('list markdown import export', () => {
+  it('supports a simple unordered list', () => {
+    testIdenticalMarkdownWithPlugins(
+      `* Item 1\n* Item 2\n* Item 3`,
+      [listsPlugin()]
+    )
+  })
+
+  it('supports a simple ordered list', () => {
+    testIdenticalMarkdownWithPlugins(
+      `1. Item 1\n2. Item 2\n3. Item 3`,
+      [listsPlugin()]
+    )
+  })
+
+  it('supports nested lists', () => {
+    testIdenticalMarkdownWithPlugins(
+      `1. First item\n   1. First item first child\n   2. First item second child\n2. Second item`,
+      [listsPlugin()]
+    )
+  })
+
+  it('preserves a non-spread list item with inline line break', () => {
+    testIdenticalMarkdownWithPlugins(
+      `1. First item\n   First item line 2\n2. Second item`,
+      [listsPlugin()]
+    )
+  })
+
+  it('supports a spread list item with a blockquote', () => {
+    testIdenticalMarkdownWithPlugins(
+      `1. First item\n\n   > This is a quote\n\n2. Second item`,
+      [listsPlugin(), quotePlugin()]
+    )
   })
 })
