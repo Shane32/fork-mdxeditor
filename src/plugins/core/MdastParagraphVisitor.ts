@@ -6,10 +6,16 @@ const lexicalTypesThatShouldSkipParagraphs = ['listitem', 'admonition']
 
 export const MdastParagraphVisitor: MdastImportVisitor<Mdast.Paragraph> = {
   testNode: 'paragraph',
-  visitNode: function ({ mdastNode, lexicalParent, actions }): void {
+  visitNode: function ({ mdastNode, mdastParent, lexicalParent, actions }): void {
     // markdown inserts paragraphs in lists. lexical does not.
     if (lexicalTypesThatShouldSkipParagraphs.includes(lexicalParent.getType())) {
-      actions.visitChildren(mdastNode, lexicalParent)
+      // For spread list items (those with multiple block-level children), preserve paragraph
+      // structure so that each paragraph is represented as a separate ParagraphNode.
+      if (lexicalParent.getType() === 'listitem' && mdastParent?.type === 'listItem' && mdastParent.children.length > 1) {
+        actions.addAndStepInto($createParagraphNode())
+      } else {
+        actions.visitChildren(mdastNode, lexicalParent)
+      }
     } else {
       actions.addAndStepInto($createParagraphNode())
     }

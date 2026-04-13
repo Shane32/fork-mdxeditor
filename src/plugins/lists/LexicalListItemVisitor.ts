@@ -42,6 +42,7 @@ export const LexicalListItemVisitor: LexicalExportVisitor<ListItemNode, Mdast.Li
           actions.visit(child, listItem)
         }
       }
+      listItem.spread = listItem.children.length > 1
     }
   }
 }
