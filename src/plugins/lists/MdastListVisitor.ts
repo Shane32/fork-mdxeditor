@@ -1,4 +1,4 @@
-import { $createListItemNode, $createListNode, $isListItemNode } from '@lexical/list'
+import { $createListNode, $isListItemNode } from '@lexical/list'
 import { ElementNode } from 'lexical'
 import * as Mdast from 'mdast'
 import { MdastImportVisitor } from '../../importMarkdownToLexical'
@@ -9,13 +9,9 @@ export const MdastListVisitor: MdastImportVisitor<Mdast.List> = {
     const listType = mdastNode.children.some((e) => typeof e.checked === 'boolean') ? 'check' : mdastNode.ordered ? 'number' : 'bullet'
     const lexicalNode = $createListNode(listType)
 
-    if ($isListItemNode(lexicalParent)) {
-      const dedicatedParent = $createListItemNode()
-      dedicatedParent.append(lexicalNode)
-      lexicalParent.insertAfter(dedicatedParent)
-    } else {
-      ;(lexicalParent as ElementNode).append(lexicalNode)
-    }
+    // Append the ListNode directly to the parent (ListItemNode or root-level ElementNode).
+    // ListItemNode can contain block-level children including nested ListNodes.
+    ;(lexicalParent as ElementNode).append(lexicalNode)
 
     actions.visitChildren(mdastNode, lexicalNode)
   }

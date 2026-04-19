@@ -16,6 +16,7 @@ import { MdastListVisitor } from './MdastListVisitor'
 import { MdastListItemVisitor } from './MdastListItemVisitor'
 import { LexicalListVisitor } from './LexicalListVisitor'
 import { LexicalListItemVisitor } from './LexicalListItemVisitor'
+import { ExtendedListItemNode } from './ExtendedListItemNode'
 import {
   INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
@@ -105,7 +106,19 @@ export const listsPlugin = realmPlugin({
       [addMdastExtension$]: gfmTaskListItemFromMarkdown(),
       [addSyntaxExtension$]: gfmTaskListItem(),
       [addImportVisitor$]: [MdastListVisitor, MdastListItemVisitor],
-      [addLexicalNode$]: [ListItemNode, ListNode],
+      [addLexicalNode$]: [
+        // Register ExtendedListItemNode directly so Lexical knows its type.
+        ExtendedListItemNode,
+        // Register the replacement so that any ListItemNode creation is
+        // transparently replaced with an ExtendedListItemNode, which allows
+        // block-level children (paragraphs, nested lists, etc.) inside list items.
+        {
+          replace: ListItemNode,
+          with: (node: ListItemNode) => new ExtendedListItemNode(node.__value, node.__checked),
+          withKlass: ExtendedListItemNode
+        },
+        ListNode
+      ],
       [addExportVisitor$]: [LexicalListVisitor, LexicalListItemVisitor],
       [addToMarkdownExtension$]: gfmTaskListItemToMarkdown(),
       [addComposerChild$]: [TabIndentationPlugin, ListPlugin, CheckListPlugin],
