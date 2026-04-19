@@ -140,37 +140,24 @@ describe('markdown import export', () => {
 
 describe('list markdown import export', () => {
   it('supports a simple unordered list', () => {
-    testIdenticalMarkdownWithPlugins(
-      `* Item 1\n* Item 2\n* Item 3`,
-      [listsPlugin()]
-    )
+    testIdenticalMarkdownWithPlugins(`* Item 1\n* Item 2\n* Item 3`, [listsPlugin()])
   })
 
   it('supports a simple ordered list', () => {
-    testIdenticalMarkdownWithPlugins(
-      `1. Item 1\n2. Item 2\n3. Item 3`,
-      [listsPlugin()]
-    )
+    testIdenticalMarkdownWithPlugins(`1. Item 1\n2. Item 2\n3. Item 3`, [listsPlugin()])
   })
 
   it('supports nested lists', () => {
-    testIdenticalMarkdownWithPlugins(
-      `1. First item\n   1. First item first child\n   2. First item second child\n2. Second item`,
-      [listsPlugin()]
-    )
+    testIdenticalMarkdownWithPlugins(`1. First item\n   1. First item first child\n   2. First item second child\n2. Second item`, [
+      listsPlugin()
+    ])
   })
 
   it('preserves a non-spread list item with inline line break', () => {
-    testIdenticalMarkdownWithPlugins(
-      `1. First item\n   First item line 2\n2. Second item`,
-      [listsPlugin()]
-    )
+    testIdenticalMarkdownWithPlugins(`1. First item\n   First item line 2\n2. Second item`, [listsPlugin()])
   })
 
   it('supports a spread list item with a blockquote', () => {
-    testIdenticalMarkdownWithPlugins(
-      `1. First item\n\n   > This is a quote\n\n2. Second item`,
-      [listsPlugin(), quotePlugin()]
-    )
+    testIdenticalMarkdownWithPlugins(`1. First item\n\n   > This is a quote\n\n2. Second item`, [listsPlugin(), quotePlugin()])
   })
 })
