@@ -1,4 +1,4 @@
-import { $createListNode, $isListItemNode } from '@lexical/list'
+import { $createListNode } from '@lexical/list'
 import { ElementNode } from 'lexical'
 import * as Mdast from 'mdast'
 import { MdastImportVisitor } from '../../importMarkdownToLexical'

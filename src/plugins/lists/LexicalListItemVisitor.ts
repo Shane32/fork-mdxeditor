@@ -1,4 +1,4 @@
-import { $isListItemNode, $isListNode, ListItemNode, ListNode } from '@lexical/list'
+import { $isListItemNode, ListItemNode, ListNode } from '@lexical/list'
 import * as Mdast from 'mdast'
 import { LexicalExportVisitor } from '../../exportMarkdownFromLexical'
 import { $isElementNode, $isTextNode, $isDecoratorNode, $isLineBreakNode } from 'lexical'

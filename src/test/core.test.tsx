@@ -4,7 +4,7 @@ import { MDXEditor, MDXEditorMethods } from '../'
 import { listsPlugin } from '../plugins/lists'
 import { quotePlugin } from '../plugins/quote'
 import { render } from '@testing-library/react'
-import { $getRoot, createEditor, ParagraphNode, TextNode } from 'lexical'
+import { $getRoot, createEditor, ElementNode, ParagraphNode, TextNode } from 'lexical'
 import { $isListItemNode, $isListNode, ListItemNode, ListNode } from '@lexical/list'
 import { $isParagraphNode } from 'lexical'
 import { QuoteNode } from '@lexical/rich-text'
@@ -175,10 +175,7 @@ describe('list item Lexical tree structure', () => {
    * import the given markdown, run the callback inside a read() call to inspect
    * the tree, then export back to markdown and return it.
    */
-  function withListEditor(
-    markdown: string,
-    inspect: (root: ReturnType<typeof $getRoot>) => void
-  ): string {
+  function withListEditor(markdown: string, inspect: (root: ReturnType<typeof $getRoot>) => void): string {
     const mdastVisitors = [
       MdastRootVisitor,
       MdastParagraphVisitor,
@@ -267,7 +264,7 @@ describe('list item Lexical tree structure', () => {
       const list = root.getFirstChild()
       expect($isListNode(list)).toBe(true)
 
-      const firstItem = (list as ListNode).getFirstChild() as ExtendedListItemNode
+      const firstItem = (list as ListNode).getFirstChild()! as unknown as ExtendedListItemNode
       expect(firstItem).toBeInstanceOf(ExtendedListItemNode)
 
       const children = firstItem.getChildren()
@@ -285,10 +282,10 @@ describe('list item Lexical tree structure', () => {
   it('stores a nested list as a ListNode child of the parent ExtendedListItemNode', () => {
     const markdown = '1. Parent item\n   1. Child item'
     const exported = withListEditor(markdown, (root) => {
-      const outerList = root.getFirstChild() as ListNode
+      const outerList = root.getFirstChild()! as ListNode
       expect($isListNode(outerList)).toBe(true)
 
-      const parentItem = outerList.getFirstChild() as ExtendedListItemNode
+      const parentItem = outerList.getFirstChild()! as ExtendedListItemNode
       expect(parentItem).toBeInstanceOf(ExtendedListItemNode)
 
       const children = parentItem.getChildren()
@@ -299,7 +296,7 @@ describe('list item Lexical tree structure', () => {
       expect($isListNode(children[1])).toBe(true)
 
       const innerList = children[1] as ListNode
-      const childItem = innerList.getFirstChild() as ExtendedListItemNode
+      const childItem = innerList.getFirstChild()! as ExtendedListItemNode
       expect(childItem).toBeInstanceOf(ExtendedListItemNode)
       const childPara = childItem.getFirstChild()
       expect($isParagraphNode(childPara)).toBe(true)
@@ -358,15 +355,15 @@ describe('list item Lexical tree structure', () => {
         codeBlockEditorDescriptors: []
       })
 
-      const list = $getRoot().getFirstChild() as ListNode
-      const firstItem = list.getFirstChild() as ExtendedListItemNode
+      const list = $getRoot().getFirstChild()! as ElementNode
+      const firstItem = list.getFirstChild()! as ElementNode
       childCountAfterImport = firstItem.getChildrenSize()
     })
 
     // Second read: verify structure is unchanged after Lexical's normalisation
     editor.read(() => {
-      const list = $getRoot().getFirstChild() as ListNode
-      const firstItem = list.getFirstChild() as ExtendedListItemNode
+      const list = $getRoot().getFirstChild()! as ElementNode
+      const firstItem = list.getFirstChild()! as ElementNode
       childCountAfterSecondRead = firstItem.getChildrenSize()
     })
 
