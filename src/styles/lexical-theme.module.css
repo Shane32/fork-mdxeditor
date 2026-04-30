@@ -63,13 +63,13 @@
   color: var(--baseTextSubtle);
 }
 
-.nestedListItem {
+.nestedListItem:not(:has(> p)) {
   list-style: none;
   list-style-type: none;
 }
 
-.nestedListItem:before,
-.nestedListItem:after {
+.nestedListItem:not(:has(> p)):before,
+.nestedListItem:not(:has(> p)):after {
   display: none;
 }
 
@@ -146,12 +146,12 @@
   border-width: 0 var(--spacing-0_5) var(--spacing-0_5) 0;
 }
 
-.nestedListItem {
+.nestedListItem:not(:has(> p)) {
   list-style-type: none;
 }
 
-.nestedListItem:before,
-.nestedListItem:after {
+.nestedListItem:not(:has(> p)):before,
+.nestedListItem:not(:has(> p)):after {
   display: none;
 }
 
