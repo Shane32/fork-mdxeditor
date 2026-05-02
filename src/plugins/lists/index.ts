@@ -9,6 +9,7 @@ import {
   addNestedEditorChild$,
   addSyntaxExtension$,
   addToMarkdownExtension$,
+  createRootEditorSubscription$,
   currentSelection$,
   rootEditor$
 } from '../core'
@@ -17,6 +18,7 @@ import { MdastListItemVisitor } from './MdastListItemVisitor'
 import { LexicalListVisitor } from './LexicalListVisitor'
 import { LexicalListItemVisitor } from './LexicalListItemVisitor'
 import { ExtendedListItemNode } from './ExtendedListItemNode'
+import { registerExtendedListItemCommands } from './registerExtendedListItemCommands'
 import {
   INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
@@ -122,8 +124,9 @@ export const listsPlugin = realmPlugin({
       [addExportVisitor$]: [LexicalListVisitor, LexicalListItemVisitor],
       [addToMarkdownExtension$]: gfmTaskListItemToMarkdown(),
       [addComposerChild$]: [TabIndentationPlugin, ListPlugin, CheckListPlugin],
-      [addNestedEditorChild$]: [TabIndentationPlugin, ListPlugin, CheckListPlugin]
+      [addNestedEditorChild$]: [TabIndentationPlugin, ListPlugin, CheckListPlugin],
       // Note: intentionally not registered to addTableCellEditorChild$ — lists are not supported in table cells
+      [createRootEditorSubscription$]: registerExtendedListItemCommands
     })
   }
 })

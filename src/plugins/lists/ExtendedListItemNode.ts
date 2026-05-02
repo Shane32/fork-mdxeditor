@@ -1,5 +1,6 @@
-import { ElementNode, LexicalNode, Spread } from 'lexical'
+import { ElementNode, LexicalNode, RangeSelection, Spread } from 'lexical'
 import { $isListItemNode, ListItemNode, SerializedListItemNode } from '@lexical/list'
+import { $collapseExtendedListItemAtStart } from './ExtendedListItemBackspaceHandler'
 
 export type SerializedExtendedListItemNode = Spread<
   {
@@ -7,6 +8,10 @@ export type SerializedExtendedListItemNode = Spread<
   },
   SerializedListItemNode
 >
+
+// ---------------------------------------------------------------------------
+// ExtendedListItemNode class
+// ---------------------------------------------------------------------------
 
 /**
  * A replacement for {@link ListItemNode} that allows block-level children
@@ -48,6 +53,19 @@ export class ExtendedListItemNode extends ListItemNode {
    */
   canMergeWith(node: LexicalNode): boolean {
     return $isListItemNode(node)
+  }
+
+  /**
+   * Override collapseAtStart to handle backspace at the start of the first
+   * paragraph of this list item. This is called by Lexical's $collapseAtStart
+   * when the cursor is at offset 0 of a child element with no previous sibling,
+   * and that child's collapseAtStart returned false.
+   *
+   * The actual logic lives in ExtendedListItemBackspaceHandler.ts alongside
+   * the rest of the backspace handling.
+   */
+  collapseAtStart(_selection: RangeSelection): true {
+    return $collapseExtendedListItemAtStart(this)
   }
 
   static importJSON(serializedNode: SerializedListItemNode): ExtendedListItemNode {
