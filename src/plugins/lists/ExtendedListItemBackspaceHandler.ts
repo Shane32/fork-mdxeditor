@@ -169,12 +169,26 @@ export function $handleExtendedListItemDeleteCharacter(): boolean {
 
   const prevParagraphSibling = paragraph.getPreviousSibling()
   const isFirstParagraph = prevParagraphSibling === null || $isListNode(prevParagraphSibling)
+  const prevListItem = listItem.getPreviousSibling()
 
   if (isFirstParagraph) {
-    // Objectives 1, 2, 3 are handled by collapseAtStart on ExtendedListItemNode.
-    // Return false to let the default deleteCharacter run, which will call
-    // $collapseAtStart → ParagraphNode.collapseAtStart (returns false) →
-    // ExtendedListItemNode.collapseAtStart (our override).
+    if (prevListItem !== null && $isListItemNode(prevListItem)) {
+      // Objective 3: Non-first list item — handle directly here.
+      // We cannot delegate to the default handler because Lexical's list handler
+      // moves the cursor to the previous list item instead of calling collapseAtStart.
+      const newParagraph = $createParagraphNode()
+      if ($isParagraphNode(paragraph)) {
+        for (const inlineChild of paragraph.getChildren()) {
+          newParagraph.append(inlineChild)
+        }
+      }
+      prevListItem.append(newParagraph)
+      listItem.remove()
+      newParagraph.selectStart()
+      return true
+    }
+    // Objectives 1 and 2 (first list item): delegate to collapseAtStart via
+    // the default deleteCharacter handler.
     return false
   }
 
